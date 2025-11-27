@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaLog | Elite Edition</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="bg-animation">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+    </div>
+
+    <div id="authSection" class="auth-wrapper">
+        <div class="container h-100 d-flex justify-content-center align-items-center">
+            
+            <div class="login-box glass-panel" data-aos="zoom-in">
+                <div class="login-left d-none d-md-flex">
+                    <div class="content">
+                        <h2>AquaLog<span class="text-cyan">.Pro</span></h2>
+                        <p>Profesyonel balıkçılar için yeni nesil av takip sistemi.</p>
+                        <div class="feature-pills">
+                            <span><i class="fa-solid fa-satellite"></i> GPS</span>
+                            <span><i class="fa-solid fa-chart-line"></i> Analiz</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="login-right">
+                    <div id="loginCard">
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold text-white">Giriş Yap</h3>
+                            <p class="text-white-50 small">Kaptan köşküne hoşgeldin.</p>
+                        </div>
+                        <form id="loginForm">
+                            <div class="input-group-custom mb-3">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" id="loginUser" placeholder="Kullanıcı Adı" required>
+                            </div>
+                            <div class="input-group-custom mb-4">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="loginPass" placeholder="Şifre" required>
+                            </div>
+                            <button type="submit" class="btn-neon w-100">Giriş Yap <i class="fa-solid fa-arrow-right"></i></button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <a href="#" onclick="toggleAuth('register')" class="link-cyan">Hesap Oluştur</a>
+                        </div>
+                    </div>
+
+                    <div id="registerCard" style="display: none;">
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold text-white">Kayıt Ol</h3>
+                            <p class="text-white-50 small">Avatarını seç ve başla.</p>
+                        </div>
+                        <form id="registerForm">
+                            <div class="avatar-selection mb-4">
+                                <input type="radio" name="avatar" value="captain" id="av1" checked>
+                                <label for="av1"><i class="fa-solid fa-user-tie"></i></label>
+                                
+                                <input type="radio" name="avatar" value="diver" id="av2">
+                                <label for="av2"><i class="fa-solid fa-mask-ventilator"></i></label>
+                                
+                                <input type="radio" name="avatar" value="fisher" id="av3">
+                                <label for="av3"><i class="fa-solid fa-user-graduate"></i></label>
+                            </div>
+
+                            <div class="input-group-custom mb-3">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <input type="text" id="regUser" placeholder="Kullanıcı Adı Belirle" required>
+                            </div>
+                            <div class="input-group-custom mb-4">
+                                <i class="fa-solid fa-key"></i>
+                                <input type="password" id="regPass" placeholder="Şifre Belirle" required>
+                            </div>
+                            <button type="submit" class="btn-neon w-100">Kaydı Tamamla</button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <a href="#" onclick="toggleAuth('login')" class="link-cyan">Giriş Yap</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="dashboardSection" class="d-flex" style="display: none !important;">
+        
+        <div class="sidebar glass-sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-water fa-2x text-cyan"></i>
+                <h4 class="m-0 fw-bold">AquaLog</h4>
+            </div>
+            
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebarAvatar"><i class="fa-solid fa-user"></i></div>
+                <div class="user-info">
+                    <h6 id="sidebarName" class="text-white mb-0">Kullanıcı</h6>
+                    <small class="text-cyan">Online</small>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="active"><a href="#"><i class="fa-solid fa-grid-2"></i> Dashboard</a></li>
+                <li><a href="#" onclick="exportToCSV()"><i class="fa-solid fa-download"></i> Rapor Al</a></li>
+                <li><a href="#" onclick="clearAllData()"><i class="fa-solid fa-trash-can"></i> Temizle</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button onclick="logout()" class="btn-logout"><i class="fa-solid fa-power-off"></i> Çıkış</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <header class="top-header">
+                <div>
+                    <h2 class="text-white fw-bold mb-0">Genel Bakış</h2>
+                    <p class="text-white-50 mb-0 small" id="currentDate">Tarih yükleniyor...</p>
+                </div>
+                <div class="weather-pill">
+                    <i class="fa-solid fa-cloud-sun text-warning"></i>
+                    <span>Denizli, 24°C</span>
+                </div>
+            </header>
+
+            <div class="container-fluid px-4 pb-5">
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="stat-card cyan-card">
+                            <div class="icon"><i class="fa-solid fa-fish"></i></div>
+                            <div>
+                                <span>Toplam Av</span>
+                                <h3 id="totalCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card purple-card">
+                            <div class="icon"><i class="fa-solid fa-weight-scale"></i></div>
+                            <div>
+                                <span>Ağırlık (kg)</span>
+                                <h3><span id="totalWeight">0.0</span></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card green-card" onclick="exportToCSV()" style="cursor: pointer;">
+                            <div class="icon"><i class="fa-solid fa-file-excel"></i></div>
+                            <div>
+                                <span>Veri Çıktısı</span>
+                                <h3>CSV İndir</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="content-card h-100">
+                            <div class="card-head d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-white fw-bold m-0"><i class="fa-solid fa-map-location text-cyan me-2"></i>Av Haritası</h5>
+                                <button class="btn-sm-glass" onclick="locateUser()"><i class="fa-solid fa-location-crosshairs"></i> Konum</button>
+                            </div>
+                            
+                            <div id="map" class="map-frame mb-4"></div>
+
+                            <div class="quick-add-bar">
+                                <h6 class="text-white-50 mb-3">Hızlı Kayıt Ekle</h6>
+                                <form id="fishForm" class="row g-2 align-items-center">
+                                    <div class="col-md-3">
+                                        <input type="date" id="catchDate" class="input-dark" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="fishType" class="input-dark" required>
+                                            <option value="" disabled selected>Tür Seçin</option>
+                                            <option value="Levrek">Levrek</option>
+                                            <option value="Çipura">Çipura</option>
+                                            <option value="Sazan">Sazan</option>
+                                            <option value="Turna">Turna</option>
+                                            <option value="Alabalık">Alabalık</option>
+                                            <option value="Diğer">Diğer</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="number" id="fishWeight" class="input-dark" placeholder="Gram" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" id="location" class="input-dark" placeholder="Konum" required>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="submit" class="btn-add-icon"><i class="fa-solid fa-plus"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="content-card mb-4">
+                            <h5 class="text-white fw-bold mb-3">Analiz</h5>
+                            <div style="height: 200px;"><canvas id="fishChart"></canvas></div>
+                        </div>
+
+                        <div class="content-card list-wrapper-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-white fw-bold m-0">Günlük</h5>
+                                <button onclick="clearAllData()" class="text-danger btn-icon-only"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <ul id="fishList" class="custom-list">
+                                </ul>
+                            <div id="emptyState" class="text-center text-white-50 py-4 small">
+                                <i class="fa-regular fa-clipboard fa-2x mb-2"></i><br>Kayıt yok
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="script.js"></script>
+</body>
+</html>
