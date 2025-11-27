@@ -36,7 +36,7 @@ Bu projeyi bilgisayarınızda çalıştırmak için herhangi bir kuruluma ihtiya
 
 1.  Repoyu klonlayın:
     ```bash
-    git clone [[https://github.com/kullaniciadi/AquaLog-Pro.git](https://github.com/Quadraxx/AquaLog-Pro.git)](https://github.com/Quadraxx/AquaLog-Web-App)
+    git clone (https://github.com/Quadraxx/AquaLog-Web-App/edit/)
     ```
 2.  `index.html` dosyasını tarayıcınızda açın.
 
